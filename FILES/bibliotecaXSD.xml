@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Biblioteca>
+    <facultad>EPS</facultad>
+    <ciudad>Madrid</ciudad>
+    <ListaLibros>
+        <Libro>
+            <titulo>El arte del suspenso</titulo>
+            <autor>Javier Sancerni</autor>
+            <numPag>421</numPag>
+        </Libro>
+        <Libro>
+            <titulo>Fisica Avanzada</titulo>
+            <autor>Alejandro Gutierrez</autor>
+            <numPag>1201</numPag>
+        </Libro>
+        <Libro>
+            <titulo>TFGFalso</titulo>
+            <autor>Pedrito Sanchez</autor>
+            <numPag>145</numPag>
+        </Libro>
+        <Libro>
+            <titulo>Pequenito y cojo</titulo>
+            <autor>Leo Messi</autor>
+            <numPag>100</numPag>
+        </Libro>
+        <Libro>
+            <titulo>Cartas anonimas</titulo>
+            <autor></autor>
+            <numPag>300</numPag>
+        </Libro>
+        <Libro>
+            <titulo>Farina</titulo>
+            <autor>Angel Nunez</autor>
+            <numPag>550</numPag>
+        </Libro>
+    </ListaLibros>
+</Biblioteca>

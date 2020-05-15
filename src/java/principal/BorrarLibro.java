@@ -14,17 +14,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import modelo.Biblioteca;
-import modelo.ListaLibros;
+import modelo.Libro;
 
 /**
  *
  * @author Alex
  */
-public class MostrarLibros extends HttpServlet {
-
-    ServicioBiblioteca sB = new ServicioBiblioteca();
-    Verificador ver = new Verificador();
-    String token = "";
+public class BorrarLibro extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -35,58 +31,35 @@ public class MostrarLibros extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
+    String token = "";
+    ServicioBiblioteca sB = new ServicioBiblioteca();
+    Verificador ver = new Verificador();
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            token = (String) request.getServletContext().getAttribute("token");
-            response.setContentType("text/html;charset=UTF-8");
-
+            token = (String) getServletContext().getAttribute("token");
             if (token == null || !ver.comprobarToken(token)) {
                 RequestDispatcher rd = getServletContext().getRequestDispatcher("/noToken.html");
                 rd.forward(request, response);
-                return;
             }
-            Biblioteca biblioteca = null;
-            biblioteca = sB.getBiblioteca(Biblioteca.class, token);
-            if (biblioteca == null || ver.comprobarBiblioteca(biblioteca) == false) {
+            Biblioteca biblioteca = sB.getBiblioteca(Biblioteca.class, token);
+            if (ver.comprobarBiblioteca(biblioteca) == false) {
                 RequestDispatcher rd = getServletContext().getRequestDispatcher("/noBiblioteca.html");
                 rd.forward(request, response);
             }
-            ListaLibros listaLibros = (ListaLibros) sB.getLibros(ListaLibros.class, token);
 
-            try (PrintWriter out = response.getWriter()) {
-                out.println("<!DOCTYPE html>");
-                out.println("<html>");
-                out.println("<head>");
-                out.println("<title>Servlet MostrarLibro</title>");
-                out.println("<style>");
-                out.println("table, th, td {\n"
-                        + "  border: 1px solid black;\n"
-                        + "}");
-                out.println("</style>");
-                out.println("</head>");
-                out.println("<body>");
-                out.println("<h3>Biblioteca: " + biblioteca.getFacultad() + "</h3>");
-                out.println("<table>");
-                out.println("<tr><th>Título</th>"
-                        + "<th>Autor</th>" + "<th>Nº Páginas</th></tr>");
-                for (int i = 0; i < listaLibros.getLibros().size(); i++) {
-                    out.println("<tr>");
-                    out.println("<td>" + listaLibros.getLibros().get(i).getTitulo() + "</td>");
-                    out.println("<td>" + listaLibros.getLibros().get(i).getAutor() + "</td>");
-                    out.println("<td>" + listaLibros.getLibros().get(i).getNumPag() + "</td>");
-                    out.println("</tr>");
-                }
-                out.println("</table> <br>");
-                out.println("<a href=\"index.html\">Volver atrás</a>");
-                out.println("</body>");
-                out.println("</html>");
-            } catch (Exception ex) {
-                System.out.println(ex);
-            }
-        } catch (Exception ex) {
+            String numLibro = (String) request.getParameter("numLibro");
+
+            sB.deleteLibro(Biblioteca.class, numLibro, token);
+            RequestDispatcher rd = getServletContext().getNamedDispatcher("GestionarBiblioteca");
+            rd.forward(request, response);
+        } catch (IOException ex) {
             System.out.println(ex);
+            RequestDispatcher rd = getServletContext().getRequestDispatcher("/noBiblioteca.html");
+            rd.forward(request, response);
         }
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

@@ -6,22 +6,25 @@
 package principal;
 
 import RestServices.ServicioBiblioteca;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.ClientErrorException;
 import modelo.Biblioteca;
-import modelo.Libro;
 
 /**
  *
  * @author Alex
  */
-public class ObtenerLibro extends HttpServlet {
+public class ExportarBiblioteca extends HttpServlet {
 
     ServicioBiblioteca sB = new ServicioBiblioteca();
     Verificador ver = new Verificador();
@@ -38,53 +41,54 @@ public class ObtenerLibro extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            token = (String) request.getServletContext().getAttribute("token");
-            response.setContentType("text/html;charset=UTF-8");
+        token = (String) request.getServletContext().getAttribute("token");
 
-            if (token == null || !ver.comprobarToken(token)) {
-                RequestDispatcher rd = getServletContext().getRequestDispatcher("/noToken.html");
-                rd.forward(request, response);
-                return;
-            }
-            Biblioteca biblioteca = null;
-            biblioteca = sB.getBiblioteca(Biblioteca.class, token);
-            if (biblioteca == null || ver.comprobarBiblioteca(biblioteca) == false) {
-                RequestDispatcher rd = getServletContext().getRequestDispatcher("/noBiblioteca.html");
-                rd.forward(request, response);
-            }
-            String idLibro = request.getParameter("numLibro");
-            Libro libro = sB.getLibro(Libro.class, idLibro, token);
+        if (token == null || !ver.comprobarToken(token)) {
+            RequestDispatcher rd = getServletContext().getRequestDispatcher("/noToken.html");
+            rd.forward(request, response);
+        }
+        Biblioteca biblioteca = null;
+        biblioteca = sB.getBiblioteca(Biblioteca.class, token);
+        if (biblioteca == null || ver.comprobarBiblioteca(biblioteca) == false) {
+            RequestDispatcher rd = getServletContext().getRequestDispatcher("/noBiblioteca.html");
+            rd.forward(request, response);
+        }
+        String nombreFichero = request.getParameter("nombreFichero");
+        String respuesta = sB.exportarBiblioteca(nombreFichero, token);
+        descifrarString(respuesta, nombreFichero);
 
-            PrintWriter out = response.getWriter();
+        response.setContentType("text/html;charset=UTF-8");
+        try (PrintWriter out = response.getWriter()) {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet MostrarLibro</title>");
-            out.println("<style>");
-            out.println("table, th, td {\n"
-                    + "  border: 1px solid black;\n"
-                    + "}");
-            out.println("</style>");
+            out.println("<title>Servlet ExportarBiblioteca</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h3>El libro " + "obtenido es: </h3>");
-            out.println("<table>");
-            out.println("<tr><th>Id Libro</th>" + "<th>Título</th>"
-                    + "<th>Autor</th>" + "<th>Nº Páginas</th></tr>");
-            out.println("<tr>");
-            out.println("<td>" + libro.getIdLibro() + "</td>");
-            out.println("<td>" + libro.getTitulo() + "</td>");
-            out.println("<td>" + libro.getAutor() + "</td>");
-            out.println("<td>" + libro.getNumPag() + "</td>");
-            out.println("</tr>");
-            out.println("</table> <br>");
-            out.println("<h4><a href=\"/RestBibliotecaWeb/GestionarBiblioteca\">Gestionar Biblioteca</a></h4>");
+            out.println("<h1>Servlet ExportarBiblioteca at " + request.getContextPath() + "</h1>");
+            out.println("<h3>La biblioteca se ha exportado a la ruta donde guarde su IDE los archivos /h3>");
+            out.println("<a href=\"index.html\">Volver atrás</a>");
             out.println("</body>");
             out.println("</html>");
+        }
+    }
 
-        } catch (IOException | ServletException | ClientErrorException ex) {
-            System.out.println(ex);
+    private static void descifrarString(String respuesta, String nombreFichero) {
+        String newRespuesta = respuesta.replaceAll("#", "\n");
+        System.out.println(newRespuesta);
+        BufferedWriter bw = null;
+        try {
+            File fichero = new File("./" + nombreFichero + ".xml");
+            bw = new BufferedWriter(new FileWriter(fichero));
+            bw.write(newRespuesta);
+        } catch (IOException ex) {
+            Logger.getLogger(ExportarBiblioteca.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                bw.close();
+            } catch (IOException ex) {
+                Logger.getLogger(ExportarBiblioteca.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 

@@ -21,7 +21,7 @@ import modelo.Libro;
  *
  * @author Alex
  */
-public class ObtenerLibro extends HttpServlet {
+public class ModificarLibro extends HttpServlet {
 
     ServicioBiblioteca sB = new ServicioBiblioteca();
     Verificador ver = new Verificador();
@@ -38,53 +38,35 @@ public class ObtenerLibro extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        Libro libro = null;
         try {
-            token = (String) request.getServletContext().getAttribute("token");
-            response.setContentType("text/html;charset=UTF-8");
+            token = (String) getServletContext().getAttribute("token");
 
             if (token == null || !ver.comprobarToken(token)) {
                 RequestDispatcher rd = getServletContext().getRequestDispatcher("/noToken.html");
                 rd.forward(request, response);
-                return;
             }
-            Biblioteca biblioteca = null;
-            biblioteca = sB.getBiblioteca(Biblioteca.class, token);
-            if (biblioteca == null || ver.comprobarBiblioteca(biblioteca) == false) {
+            Biblioteca biblioteca = sB.getBiblioteca(Biblioteca.class, token);
+            if (ver.comprobarBiblioteca(biblioteca) == false) {
                 RequestDispatcher rd = getServletContext().getRequestDispatcher("/noBiblioteca.html");
                 rd.forward(request, response);
             }
             String idLibro = request.getParameter("numLibro");
-            Libro libro = sB.getLibro(Libro.class, idLibro, token);
+            String tituloLibro = request.getParameter("tituloLibro");
+            String autorLibro = request.getParameter("autorLibro");
+            String numeroPag = request.getParameter("numPag");
+            int numPag = Integer.parseInt(numeroPag);
 
-            PrintWriter out = response.getWriter();
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet MostrarLibro</title>");
-            out.println("<style>");
-            out.println("table, th, td {\n"
-                    + "  border: 1px solid black;\n"
-                    + "}");
-            out.println("</style>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h3>El libro " + "obtenido es: </h3>");
-            out.println("<table>");
-            out.println("<tr><th>Id Libro</th>" + "<th>Título</th>"
-                    + "<th>Autor</th>" + "<th>Nº Páginas</th></tr>");
-            out.println("<tr>");
-            out.println("<td>" + libro.getIdLibro() + "</td>");
-            out.println("<td>" + libro.getTitulo() + "</td>");
-            out.println("<td>" + libro.getAutor() + "</td>");
-            out.println("<td>" + libro.getNumPag() + "</td>");
-            out.println("</tr>");
-            out.println("</table> <br>");
-            out.println("<h4><a href=\"/RestBibliotecaWeb/GestionarBiblioteca\">Gestionar Biblioteca</a></h4>");
-            out.println("</body>");
-            out.println("</html>");
+            libro = new Libro(tituloLibro, autorLibro, numPag);
 
-        } catch (IOException | ServletException | ClientErrorException ex) {
-            System.out.println(ex);
+            Libro libroNuevo = sB.putLibro(libro, Libro.class, idLibro, token);
+
+            RequestDispatcher rd = getServletContext().getNamedDispatcher("GestionarBiblioteca");
+            rd.forward(request, response);
+
+        } catch (IOException | NumberFormatException | ServletException | ClientErrorException ex) {
+            RequestDispatcher rd = getServletContext().getRequestDispatcher("/noLibro.html");
+            rd.forward(request, response);
         }
     }
 

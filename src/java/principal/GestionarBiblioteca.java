@@ -37,7 +37,7 @@ public class GestionarBiblioteca extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setHeader("Refresh", "10");
+        response.setHeader("Refresh", "60");
         try {
             token = (String) request.getServletContext().getAttribute("token");
             response.setContentType("text/html;charset=UTF-8");
@@ -45,7 +45,6 @@ public class GestionarBiblioteca extends HttpServlet {
             if (token == null || !ver.comprobarToken(token)) {
                 RequestDispatcher rd = getServletContext().getRequestDispatcher("/noToken.html");
                 rd.forward(request, response);
-                return;
             }
             Biblioteca biblioteca = null;
             biblioteca = sB.getBiblioteca(Biblioteca.class, token);
@@ -69,10 +68,11 @@ public class GestionarBiblioteca extends HttpServlet {
                 out.println("<body>");
                 out.println("<h3>Biblioteca: " + biblioteca.getFacultad() + "</h3>");
                 out.println("<table>");
-                out.println("<tr><th>Título</th>"
-                        + "<th>Autor</th>" + "<th>Nº Páginas</th></tr>");
+                out.println("<tr><th>Id Libro</th>"
+                        + "<th>Título</th>" + "<th>Autor</th>" + "<th>Nº Páginas</th></tr>");
                 for (int i = 0; i < listaLibros.getLibros().size(); i++) {
                     out.println("<tr>");
+                    out.println("<td>" + listaLibros.getLibros().get(i).getIdLibro() + "</td>");
                     out.println("<td>" + listaLibros.getLibros().get(i).getTitulo() + "</td>");
                     out.println("<td>" + listaLibros.getLibros().get(i).getAutor() + "</td>");
                     out.println("<td>" + listaLibros.getLibros().get(i).getNumPag() + "</td>");
@@ -101,14 +101,20 @@ public class GestionarBiblioteca extends HttpServlet {
                         + "<td><input type=\"submit\" value=\"Modificar libro\"/> </td></form> ");
                 out.println("</tr>");
                 out.println("<tr>");
-                out.println("<td> <form name=\"DeletePlanetaForm\" method=\"post\" action=\"BorrarPlaneta\">\n"
-                        + "            Borrar Planeta</td>"
-                        + "<td>Número del planeta <input type=\"text\" name=\"numeroPlaneta\"/></td> "
-                        + "<td colspan=\"4\" style=\"text-align:center;\"><input type=\"submit\" value=\"Borrar planeta\" style=\"width:100%\"/> </td></form> ");
+                out.println("<td> <form name=\"DeleteLibroForm\" method=\"post\" action=\"BorrarLibro\">\n"
+                        + "            Borrar Libro</td>"
+                        + "<td>Número del libro <input type=\"text\" name=\"numLibro\"/></td> "
+                        + "<td colspan=\"4\" style=\"text-align:center;\"><input type=\"submit\" value=\"Borrar libro\" style=\"width:100%\"/> </td></form> ");
+                out.println("</tr>");
+                out.println("<tr>");
+                out.println("<td> <form name=\"ExportForm\" method=\"post\" action=\"ExportarLibro\">\n"
+                        + "            Exportar Libro</td>"
+                        + "<td>Número del Libro <input type=\"text\" name=\"numLibro\"/></td> "
+                        + "<td>Fichero destino (sin .xml) <input type=\"text\" name=\"nombreFichero\"/></td> "
+                        + "<td colspan=\"4\" style=\"text-align:center;\"><input type=\"submit\" value=\"Exportar libro\" style=\"width:100%\"/> </td></form> ");
                 out.println("</tr>");
                 out.println("</table>");
-                out.println("<br><a href=\"http://localhost:8080/RESTGalaxiaClientWeb/index.html\">Volver al índice</a>");
-                out.println("<br>Esta página se actualiza automáticamente cada 10 segundos, por favor tenga cuidado.");
+                out.println("<a href=\"index.html\">Volver atrás</a>");
                 out.println("</body>");
                 out.println("</html>");
             } catch (Exception ex) {

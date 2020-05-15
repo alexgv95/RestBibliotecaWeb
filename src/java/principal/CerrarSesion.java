@@ -5,7 +5,7 @@
  */
 package principal;
 
-import RestServices.ServicioBiblioteca;
+import RestServices.ServicioDesconexion;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.RequestDispatcher;
@@ -13,17 +13,14 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.ClientErrorException;
-import modelo.Biblioteca;
-import modelo.Libro;
 
 /**
  *
  * @author Alex
  */
-public class ObtenerLibro extends HttpServlet {
+public class CerrarSesion extends HttpServlet {
 
-    ServicioBiblioteca sB = new ServicioBiblioteca();
+    ServicioDesconexion sD = new ServicioDesconexion();
     Verificador ver = new Verificador();
     String token = "";
 
@@ -38,53 +35,29 @@ public class ObtenerLibro extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            token = (String) request.getServletContext().getAttribute("token");
-            response.setContentType("text/html;charset=UTF-8");
+        token = (String) request.getServletContext().getAttribute("token");
+        if (token == null || !ver.comprobarToken(token)) {
+            RequestDispatcher rd = getServletContext().getRequestDispatcher("/noToken.html");
+            rd.forward(request, response);
+            return;
+        }
+        String respuesta = sD.cerrarSesion(token);
+        request.getServletContext().setAttribute("token", null);
 
-            if (token == null || !ver.comprobarToken(token)) {
-                RequestDispatcher rd = getServletContext().getRequestDispatcher("/noToken.html");
-                rd.forward(request, response);
-                return;
-            }
-            Biblioteca biblioteca = null;
-            biblioteca = sB.getBiblioteca(Biblioteca.class, token);
-            if (biblioteca == null || ver.comprobarBiblioteca(biblioteca) == false) {
-                RequestDispatcher rd = getServletContext().getRequestDispatcher("/noBiblioteca.html");
-                rd.forward(request, response);
-            }
-            String idLibro = request.getParameter("numLibro");
-            Libro libro = sB.getLibro(Libro.class, idLibro, token);
-
-            PrintWriter out = response.getWriter();
+        response.setContentType("text/html;charset=UTF-8");
+        try (PrintWriter out = response.getWriter()) {
+            /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet MostrarLibro</title>");
-            out.println("<style>");
-            out.println("table, th, td {\n"
-                    + "  border: 1px solid black;\n"
-                    + "}");
-            out.println("</style>");
+            out.println("<title>Servlet CerrarSesion</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h3>El libro " + "obtenido es: </h3>");
-            out.println("<table>");
-            out.println("<tr><th>Id Libro</th>" + "<th>Título</th>"
-                    + "<th>Autor</th>" + "<th>Nº Páginas</th></tr>");
-            out.println("<tr>");
-            out.println("<td>" + libro.getIdLibro() + "</td>");
-            out.println("<td>" + libro.getTitulo() + "</td>");
-            out.println("<td>" + libro.getAutor() + "</td>");
-            out.println("<td>" + libro.getNumPag() + "</td>");
-            out.println("</tr>");
-            out.println("</table> <br>");
-            out.println("<h4><a href=\"/RestBibliotecaWeb/GestionarBiblioteca\">Gestionar Biblioteca</a></h4>");
+            out.println("<h1>Servlet CerrarSesion at " + request.getContextPath() + "</h1>");
+            out.println("<h3>" + respuesta + "</h3>");
+            out.println("<a href=\"index.html\">Volver atrás</a>");
             out.println("</body>");
             out.println("</html>");
-
-        } catch (IOException | ServletException | ClientErrorException ex) {
-            System.out.println(ex);
         }
     }
 

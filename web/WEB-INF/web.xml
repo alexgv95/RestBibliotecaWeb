@@ -21,16 +21,44 @@
         <servlet-class>principal.AnadirLibro</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>MostrarLibros</servlet-name>
-        <servlet-class>principal.MostrarLibros</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>ObtenerLibro</servlet-name>
         <servlet-class>principal.ObtenerLibro</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>GestionarBiblioteca</servlet-name>
         <servlet-class>principal.GestionarBiblioteca</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ModificarLibro</servlet-name>
+        <servlet-class>principal.ModificarLibro</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>BorrarLibro</servlet-name>
+        <servlet-class>principal.BorrarLibro</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ImportarBiblioteca</servlet-name>
+        <servlet-class>principal.ImportarBiblioteca</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ExportarBiblioteca</servlet-name>
+        <servlet-class>principal.ExportarBiblioteca</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ImportarLibro</servlet-name>
+        <servlet-class>principal.ImportarLibro</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ExportarLibro</servlet-name>
+        <servlet-class>principal.ExportarLibro</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ValidarXSD</servlet-name>
+        <servlet-class>principal.ValidarXSD</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>CerrarSesion</servlet-name>
+        <servlet-class>principal.CerrarSesion</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>RegistrarUsuario</servlet-name>
@@ -53,16 +81,44 @@
         <url-pattern>/AnadirLibro</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>MostrarLibros</servlet-name>
-        <url-pattern>/MostrarLibros</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>ObtenerLibro</servlet-name>
         <url-pattern>/ObtenerLibro</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>GestionarBiblioteca</servlet-name>
         <url-pattern>/GestionarBiblioteca</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ModificarLibro</servlet-name>
+        <url-pattern>/ModificarLibro</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>BorrarLibro</servlet-name>
+        <url-pattern>/BorrarLibro</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ImportarBiblioteca</servlet-name>
+        <url-pattern>/ImportarBiblioteca</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ExportarBiblioteca</servlet-name>
+        <url-pattern>/ExportarBiblioteca</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ImportarLibro</servlet-name>
+        <url-pattern>/ImportarLibro</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ExportarLibro</servlet-name>
+        <url-pattern>/ExportarLibro</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ValidarXSD</servlet-name>
+        <url-pattern>/ValidarXSD</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CerrarSesion</servlet-name>
+        <url-pattern>/CerrarSesion</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
