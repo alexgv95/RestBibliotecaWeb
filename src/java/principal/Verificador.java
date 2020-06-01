@@ -14,7 +14,7 @@ import modelo.Biblioteca;
 public class Verificador {
 
     boolean tokenValidado = false;
-    boolean galaxiaExiste = false;
+    boolean bibliotecaExiste = false;
 
     public boolean comprobarToken(String token) {
         tokenValidado = !token.equals("");
@@ -22,8 +22,8 @@ public class Verificador {
     }
 
     public boolean comprobarBiblioteca(Biblioteca biblioteca) {
-        galaxiaExiste = !biblioteca.getFacultad().equals("");
-        return galaxiaExiste;
+        bibliotecaExiste = !biblioteca.getFacultad().equals("");
+        return bibliotecaExiste;
     }
 
 }
